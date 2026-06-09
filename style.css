@@ -1,0 +1,322 @@
+/* ============================================================
+   GLOBAL RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #ededed;
+  color: #32302d;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* ============================================================
+   NAVBAR — HAMBURGER BUTTON
+   ============================================================ */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+}
+
+.hamburger {
+  position: fixed;
+  top: 23px;
+  left: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px;
+  z-index: 1200;
+}
+
+/* The two lines */
+.hamburger .line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #32302d;
+  border-radius: 1px;
+  transform-origin: center;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    background-color 0.3s ease;
+}
+
+/* When menu is open, lines turn light */
+.hamburger.is-open .line {
+  background-color: #ededed;
+}
+
+/* Animate top line into top stroke of X */
+.hamburger.is-open .line-top {
+  transform: translateY(4px) rotate(45deg);
+}
+
+/* Animate bottom line into bottom stroke of X */
+.hamburger.is-open .line-bottom {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+/* ============================================================
+   NAVBAR — FULL SCREEN OVERLAY MENU
+   ============================================================ */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #32302d;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  /* top: 135px positions links where they sit in Figma (12.5% of 1080px)
+     left: 32px matches 1.67% of 1920px from Figma */
+  padding: 135px 32px 32px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+/* When the menu is open, make it visible and interactive */
+.menu-overlay.is-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.menu-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-links a {
+  text-decoration: none;
+  color: #ededed;
+  font-size: 17px;
+  font-weight: 400;
+  transition: opacity 0.2s ease;
+}
+
+.menu-links a:hover {
+  opacity: 0.6;
+}
+
+/* ============================================================
+   PAGE LAYOUT — CENTERED CONTENT
+   ============================================================ */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
+   HOME PAGE
+   ============================================================ */
+.home-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.home-illustration {
+  width: 118px;
+  height: 271px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.home-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.home-text h1 {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.home-text h1 strong {
+  font-weight: 700;
+}
+
+.home-text p {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 281px;
+}
+
+/* The small "?" in the bottom right corner
+   29px from right, 18px from bottom — exact Figma measurements */
+.corner-link {
+  position: fixed;
+  bottom: 18px;
+  right: 29px;
+  font-size: 15px;
+  color: #c7c7c7;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.corner-link:hover {
+  color: #32302d;
+}
+
+/* ============================================================
+   ABOUT PAGE
+   ============================================================ */
+.about-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  max-width: 700px;
+}
+
+.about-image {
+  width: 175px;
+  height: 175px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-text h1 {
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.about-text p {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.7;
+  max-width: 400px;
+  color: #32302d;
+}
+
+/* ============================================================
+   MUSIC PAGE
+   ============================================================ */
+.simple-content {
+  text-align: center;
+}
+
+.simple-content p {
+  font-size: 15px;
+  color: #32302d;
+}
+
+/* ============================================================
+   WEBSITE PAGE
+   ============================================================ */
+.website-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+}
+
+.website-content h1 {
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.website-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #32302d;
+}
+
+/* ============================================================
+   OOPS PAGE (404)
+   ============================================================ */
+.oops-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oops-content h1 {
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.oops-content p {
+  font-size: 15px;
+  color: #32302d;
+}
+
+/* ============================================================
+   SETUP PAGE
+   ============================================================ */
+
+/* setup reuses .simple-content */
+
+/* ============================================================
+   RESPONSIVE — TABLET & MOBILE
+   ============================================================ */
+@media (max-width: 768px) {
+  .home-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .home-illustration {
+    width: 90px;
+    height: auto;
+  }
+
+  .home-text p {
+    max-width: 100%;
+  }
+
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .about-text p {
+    max-width: 100%;
+  }
+
+  .website-content {
+    padding: 0 24px;
+  }
+}
