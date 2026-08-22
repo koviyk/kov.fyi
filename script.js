@@ -1,56 +1,34 @@
 // ============================================================
-// NAVBAR LOADER
-// Fetches navbar.html and injects it into every page
+// BOTTOM BAR — DATE
+// Updates the date display to today's date dynamically
 // ============================================================
 
-async function loadNavbar() {
-  try {
-    const response = await fetch('/components/navbar.html');
-    const html = await response.text();
+function updateDate() {
+  const el = document.getElementById('current-date');
+  if (!el) return;
 
-    const placeholder = document.getElementById('navbar-placeholder');
-    if (placeholder) {
-      placeholder.innerHTML = html;
-      initNavbar();
-    }
-  } catch (error) {
-    console.error('Could not load navbar:', error);
-  }
+  const now = new Date();
+  const day   = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year  = String(now.getFullYear()).slice(2); // last 2 digits
+
+  el.textContent = `${day} ${month} ${year}`;
 }
 
 // ============================================================
-// NAVBAR TOGGLE LOGIC
-// The hamburger button opens AND closes the menu.
-// It animates from two lines → X on open, X → two lines on close.
+// HOME ILLUSTRATION — block right-click save (image only)
+// Scoped to .home-image img specifically — right-click stays
+// enabled everywhere else on the site (text, nav, bottom bar,
+// other pages). Weak deterrent only (devtools/direct URL access
+// still bypass it), but stops the casual "save image as" path.
 // ============================================================
 
-function initNavbar() {
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const menuOverlay  = document.getElementById('menuOverlay');
+function guardHomeImage() {
+  const img = document.querySelector('.home-image img');
+  if (!img) return;
 
-  function openMenu() {
-    menuOverlay.classList.add('is-open');
-    hamburgerBtn.classList.add('is-open');
-    hamburgerBtn.setAttribute('aria-expanded', 'true');
-    hamburgerBtn.setAttribute('aria-label', 'Close menu');
-  }
-
-  function closeMenu() {
-    menuOverlay.classList.remove('is-open');
-    hamburgerBtn.classList.remove('is-open');
-    hamburgerBtn.setAttribute('aria-expanded', 'false');
-    hamburgerBtn.setAttribute('aria-label', 'Open menu');
-  }
-
-  // Single button toggles open/close
-  hamburgerBtn.addEventListener('click', () => {
-    const isOpen = menuOverlay.classList.contains('is-open');
-    isOpen ? closeMenu() : openMenu();
-  });
-
-  // Close on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMenu();
+  img.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
   });
 }
 
@@ -58,4 +36,7 @@ function initNavbar() {
 // RUN ON PAGE LOAD
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', loadNavbar);
+document.addEventListener('DOMContentLoaded', () => {
+  updateDate();
+  guardHomeImage();
+});

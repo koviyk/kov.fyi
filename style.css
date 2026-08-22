@@ -1,5 +1,5 @@
 /* ============================================================
-   GLOBAL RESET & BASE
+   RESET & BASE
    ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -10,313 +10,326 @@
 html, body {
   height: 100%;
   width: 100%;
+  overflow: hidden; /* the site never scrolls, on any viewport size */
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #ededed;
-  color: #32302d;
-  min-height: 100vh;
+  background-color: #f5f6f4;
+  color: #202918;
   -webkit-font-smoothing: antialiased;
 }
 
 a {
   color: inherit;
-  text-decoration: underline;
-}
-
-/* ============================================================
-   NAVBAR — HAMBURGER BUTTON
-   ============================================================ */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1100;
-}
-
-.hamburger {
-  position: fixed;
-  top: 23px;
-  left: 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 4px;
-  z-index: 1200;
-}
-
-/* The two lines */
-.hamburger .line {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background-color: #32302d;
-  border-radius: 1px;
-  transform-origin: center;
-  transition:
-    transform 0.3s ease,
-    opacity 0.3s ease,
-    background-color 0.3s ease;
-}
-
-/* When menu is open, lines turn light */
-.hamburger.is-open .line {
-  background-color: #ededed;
-}
-
-/* Animate top line into top stroke of X */
-.hamburger.is-open .line-top {
-  transform: translateY(4px) rotate(45deg);
-}
-
-/* Animate bottom line into bottom stroke of X */
-.hamburger.is-open .line-bottom {
-  transform: translateY(-4px) rotate(-45deg);
-}
-
-/* ============================================================
-   NAVBAR — FULL SCREEN OVERLAY MENU
-   ============================================================ */
-.menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #32302d;
-  z-index: 1050;
-  display: flex;
-  flex-direction: column;
-  /* top: 135px positions links where they sit in Figma (12.5% of 1080px)
-     left: 32px matches 1.67% of 1920px from Figma */
-  padding: 135px 32px 32px;
-
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-/* When the menu is open, make it visible and interactive */
-.menu-overlay.is-open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.menu-links {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.menu-links a {
   text-decoration: none;
-  color: #ededed;
-  font-size: 17px;
-  font-weight: 400;
-  transition: opacity 0.2s ease;
-}
-
-.menu-links a:hover {
-  opacity: 0.6;
 }
 
 /* ============================================================
-   PAGE LAYOUT — CENTERED CONTENT
+   FIXED DESIGN STAGE
+   1920x1080 — matches the Figma frame exactly. Nothing inside
+   this box is responsive: every element is absolutely
+   positioned at its literal design coordinate and the stage
+   itself never resizes or reflows.
+
+   The stage is pinned dead-center of the viewport (not flowed
+   with margin:auto) and the page never scrolls. On viewports
+   smaller than 1920x1080 the stage is simply clipped equally on
+   all sides — the content itself does not move, reflow, or
+   scale, it's just surrounded (or cropped) by the background
+   color. Its center-of-screen position is identical on every
+   page.
    ============================================================ */
-.page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.stage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%);
 }
 
 /* ============================================================
-   HOME PAGE
+   PAGE TITLE / HOME GREETING
+   Always at the same fixed coordinate on every page. Wrapped in
+   a link back to home wherever it appears.
    ============================================================ */
-.home-content {
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
+.page-title-link,
+.home-greeting-link {
+  position: absolute;
+  left: 554px;
+  top: 400px;
+  display: block;
 }
 
-.home-illustration {
-  width: 118px;
-  height: 271px;
-  object-fit: cover;
-  flex-shrink: 0;
+.page-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #202918;
+  line-height: 1.4;
 }
 
-.home-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 4px;
-}
-
-.home-text h1 {
-  font-size: 17px;
+.home-greeting {
+  font-size: 15px;
   font-weight: 400;
-  line-height: 1.5;
+  color: #202918;
+  line-height: 1.4;
 }
 
-.home-text h1 strong {
+.home-greeting strong {
   font-weight: 700;
 }
 
-.home-text p {
-  font-size: 15px;
+/* ============================================================
+   VERTICAL NAV — fixed position, fixed item spacing.
+   Identical on every page; never reflows.
+   ============================================================ */
+.side-nav {
+  position: absolute;
+  left: 554px;
+  top: 455px;
+  list-style: none;
+}
+
+.side-nav li {
+  position: absolute;
+  left: 0;
+}
+
+.side-nav li:nth-child(1) { top: 0px; }
+.side-nav li:nth-child(2) { top: 38px; }
+.side-nav li:nth-child(3) { top: 76px; }
+.side-nav li:nth-child(4) { top: 114px; }
+.side-nav li:nth-child(5) { top: 152px; }
+
+/* .active and the links share display:block + identical
+   line-height so the text never shifts vertically when a page
+   becomes active — only color and font-weight change. */
+.side-nav a {
+  display: block;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 1.6;
-  max-width: 281px;
+  color: #60696b;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
-/* The small "?" in the bottom right corner
-   29px from right, 18px from bottom — exact Figma measurements */
-.corner-link {
-  position: fixed;
-  bottom: 18px;
-  right: 29px;
-  font-size: 15px;
-  color: #c7c7c7;
-  text-decoration: none;
-  line-height: 1;
+.side-nav a:hover {
+  color: #202918;
 }
 
-.corner-link:hover {
-  color: #32302d;
+.side-nav .active {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #83af11;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   HOME PAGE — illustration
+   ============================================================ */
+.home-image {
+  position: absolute;
+  left: 857px;
+  top: 315px;
+}
+
+.home-image img {
+  width: 528px;
+  height: 395px;
+  object-fit: cover;
+  display: block;
 }
 
 /* ============================================================
    ABOUT PAGE
    ============================================================ */
-.about-content {
-  display: flex;
-  align-items: flex-start;
-  gap: 32px;
-  max-width: 700px;
-}
-
-.about-image {
-  width: 175px;
-  height: 175px;
-  object-fit: cover;
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
 .about-text {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.about-text h1 {
-  font-size: 17px;
+  position: absolute;
+  left: 781px;
+  top: 455px;
+  width: 585px;
+  font-size: 13px;
   font-weight: 400;
+  color: #202918;
+  line-height: 1.4;
 }
 
 .about-text p {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.7;
-  max-width: 400px;
-  color: #32302d;
+  line-height: 1.4;
+}
+
+.about-text .spacer {
+  height: 1.4em;
 }
 
 /* ============================================================
-   MUSIC PAGE
+   GEAR PAGE — EXPANDABLE SECTIONS
    ============================================================ */
-.simple-content {
-  text-align: center;
-}
-
-.simple-content p {
-  font-size: 15px;
-  color: #32302d;
-}
-
-/* ============================================================
-   WEBSITE PAGE
-   ============================================================ */
-.website-content {
+.gear-col {
+  position: absolute;
+  top: 446px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 400px;
+  gap: 40px;
+  width: 301px;
 }
 
-.website-content h1 {
-  font-size: 17px;
+.gear-col.col-1 { left: 761px; }
+.gear-col.col-2 { left: 1139px; }
+
+.gear-section summary {
+  font-size: 13px;
+  font-weight: 700;
+  color: #202918;
+  cursor: pointer;
+  list-style: none;
+  line-height: 1.4;
+  padding: 10px 0;
+  user-select: none;
+}
+
+.gear-section summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Fixed-width marker box: '+' and '-' have different glyph
+   widths in Inter, so without a fixed box the header text
+   after the marker shifts left/right depending on open/closed
+   state. Locking the box width keeps the text that follows at
+   an identical x position regardless of state — this is what
+   keeps Gear (sections open by default) and Projects (sections
+   closed by default) pixel-aligned with each other. */
+.gear-section summary::before {
+  content: '+';
+  display: inline-block;
+  width: 10px;
   font-weight: 400;
 }
 
-.website-content p {
-  font-size: 15px;
-  line-height: 1.7;
-  color: #32302d;
+.gear-section[open] summary::before {
+  content: '-';
+}
+
+.gear-section .gear-body {
+  font-size: 13px;
+  font-weight: 400;
+  color: #202918;
+  line-height: 1.4;
+  margin-top: 8px;
+}
+
+.gear-section .gear-body ul {
+  list-style: disc;
+  padding-left: 16px;
+  margin-top: 8px;
+}
+
+.gear-section .gear-body li {
+  margin-bottom: 2px;
+}
+
+.gear-section .gear-body strong {
+  font-weight: 700;
 }
 
 /* ============================================================
-   OOPS PAGE (404)
+   PROJECTS PAGE
    ============================================================ */
-.oops-content {
+.projects-col {
+  position: absolute;
+  top: 446px;
+  width: 301px;
+}
+
+.projects-col.col-1 { left: 761px; }
+.projects-col.col-2 { left: 1139px; }
+
+/* ============================================================
+   CURRENT / BLOG PAGES — PLACEHOLDER
+   ============================================================ */
+.tba-text {
+  position: absolute;
+  left: 781px;
+  top: 455px;
+  font-size: 13px;
+  color: #60696b;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   BOTTOM BAR
+   Pinned to the browser viewport (not the design stage) so it
+   is always visible — fixed position, fixed padding, no
+   breakpoints, never changes.
+
+   Aligned by BOTTOM EDGE (not vertically centered) so it
+   matches the Figma anchor exactly: every element's bottom
+   edge sits 25px above the bottom of the screen, per the
+   "home" frame spec (icon + song-name text + date text all
+   bottom-align at the same line; the version label stacks
+   directly above the date with zero gap).
+   ============================================================ */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 25px 20px 25px;
+  pointer-events: none;
+}
+
+.bottom-left {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.music-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.now-playing {
+  font-size: 11px;
+  font-weight: 400;
+  color: #99bb42;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.bottom-right {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: flex-end;
+  gap: 0;
+  pointer-events: all;
 }
 
-.oops-content h1 {
-  font-size: 17px;
-  font-weight: 400;
+.version-label {
+  font-size: 11px;
+  font-weight: 200;
+  color: #99bb42;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.oops-content p {
-  font-size: 15px;
-  color: #32302d;
+.version-label:hover {
+  color: #83af11;
 }
 
-/* ============================================================
-   SETUP PAGE
-   ============================================================ */
-
-/* setup reuses .simple-content */
-
-/* ============================================================
-   RESPONSIVE — TABLET & MOBILE
-   ============================================================ */
-@media (max-width: 768px) {
-  .home-content {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 16px;
-  }
-
-  .home-illustration {
-    width: 90px;
-    height: auto;
-  }
-
-  .home-text p {
-    max-width: 100%;
-  }
-
-  .about-content {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .about-text p {
-    max-width: 100%;
-  }
-
-  .website-content {
-    padding: 0 24px;
-  }
+.date-label {
+  font-size: 11px;
+  font-weight: 300;
+  color: #83af11;
+  line-height: 1.4;
 }

@@ -4,42 +4,50 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kov</title>
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 
-  <!-- Navbar loads here automatically via script.js -->
-  <div id="navbar-placeholder"></div>
+  <main class="stage">
 
-  <!-- Main page content, vertically and horizontally centered -->
-  <main class="page">
-    <div class="home-content">
+    <!-- Greeting -->
+    <p class="home-greeting" style="position: absolute; left: 554px; top: 400px;">Hi, I'm <strong>Kov</strong>.</p>
 
-      <!-- Your character illustration -->
-      <img
-        src="/assets/images/kov-illustration.png"
-        alt="Kov character illustration"
-        class="home-illustration"
-      />
+    <!-- Vertical nav -->
+    <nav>
+      <ul class="side-nav">
+        <li><a href="/about.html">About</a></li>
+        <li><a href="/gear.html">Gear</a></li>
+        <li><a href="/projects.html">Projects</a></li>
+        <li><a href="/current.html">Current</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+      </ul>
+    </nav>
 
-      <!-- Text block -->
-      <div class="home-text">
-        <h1>Hi, I'm <strong>Kov</strong>.</h1>
-        <p>
-          I'm an artist and an amateur musician.<br /><br />
-          I <a href="https://kov.bearblog.dev/" target="_blank">bark</a> and
-          <a href="https://github.com/koviyk" target="_blank">write funny</a>.
-        </p>
-      </div>
-
+    <!-- Illustration -->
+    <div class="home-image">
+      <img src="/assets/images/mainpage.png" alt="Kov illustration" draggable="false" />
     </div>
+
   </main>
 
-  <!-- Small "?" link in the bottom right corner -->
-  <a href="/website.html" class="corner-link">?</a>
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <svg class="music-icon" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 10.5V3.5L11 2.5V9.5M5 10.5C5 11.3284 4.32843 12 3.5 12C2.67157 12 2 11.3284 2 10.5C2 9.67157 2.67157 9 3.5 9C4.32843 9 5 9.67157 5 10.5ZM11 9.5C11 10.3284 10.3284 11 9.5 11C8.67157 11 8 10.3284 8 9.5C8 8.67157 8.67157 8 9.5 8C10.3284 8 11 8.67157 11 9.5Z" stroke="#99bb42" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="now-playing" id="now-playing-text">—</span>
+    </div>
+    <div class="bottom-right">
+      <a href="https://github.com/koviyk/kov.fyi" class="version-label" target="_blank" rel="noopener noreferrer">v2.0.0</a>
+      <span class="date-label" id="current-date"></span>
+    </div>
+  </div>
 
   <script src="/script.js"></script>
 </body>

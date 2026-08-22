@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gear — Kov</title>
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <main class="stage">
+
+    <!-- Page title — links back to home -->
+    <a href="/index.html" class="page-title-link">
+      <p class="page-title">Gear</p>
+    </a>
+
+    <!-- Vertical nav -->
+    <nav>
+      <ul class="side-nav">
+        <li><a href="/about.html">About</a></li>
+        <li><span class="active">Gear</span></li>
+        <li><a href="/projects.html">Projects</a></li>
+        <li><a href="/current.html">Current</a></li>
+        <li><a href="/blog.html">Blog</a></li>
+      </ul>
+    </nav>
+
+    <!-- Left column: PC Info + Music -->
+    <div class="gear-col col-1">
+
+      <details class="gear-section" open>
+        <summary>PC Info</summary>
+        <div class="gear-body">
+          <ul>
+            <li><strong>CPU:</strong> Intel Core i7 13700K</li>
+            <li><strong>MOBO:</strong> Gigabyte Z790 UD</li>
+            <li><strong>GPU:</strong> NVIDIA GeForce RTX 4070 Ti</li>
+            <li><strong>RAM:</strong> Corsair DDR5 32G 5200</li>
+            <li><strong>PSU:</strong> Corsair 850W RM850e</li>
+            <li><strong>Cooling:</strong> Noctua NH-D15</li>
+            <li><strong>Fans:</strong> ML140 140mm PWM (x4)</li>
+            <li><strong>Case:</strong> Corsair 4000D Airflow</li>
+            <li><strong>Storage (OS):</strong> Samsung SSD 1.0TB 980</li>
+            <li><strong>Storage (Files):</strong> KINGSTON SUV400S37240G</li>
+            <li><strong>Storage (Storage):</strong> ST2000DM001-1ER164</li>
+            <li><strong>Storage (Music):</strong> TS512GSSD230S</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="gear-section">
+        <summary>Music</summary>
+        <div class="gear-body">
+          <p>all of these are to be bought soon enough.</p>
+          <ul>
+            <li><strong>OP-1</strong></li>
+            <li><strong>PO-33 K.O!</strong></li>
+            <li><strong>PO-12 Rhythm</strong></li>
+            <li><strong>EP–1320 medieval</strong></li>
+            <li><strong>EP–40 riddim</strong></li>
+            <li><strong>[Guitar]</strong></li>
+          </ul>
+        </div>
+      </details>
+
+    </div>
+
+    <!-- Right column: Peripherals -->
+    <div class="gear-col col-2">
+
+      <details class="gear-section" open>
+        <summary>Peripherals</summary>
+        <div class="gear-body">
+          <ul>
+            <li><strong>Screen:</strong> CU34G4Z 34"</li>
+            <li><strong>Drawing Tablet:</strong> Gaomon PD2200</li>
+            <li><strong>Mouse:</strong> Cooler Master MM710</li>
+            <li><strong>Keyboard:</strong> Tofu65 (HMX Cloud Switches)</li>
+            <li><strong>Keycaps:</strong> GMK Rome knockoff</li>
+            <li><strong>Microphone:</strong> Blue Yeti</li>
+            <li><strong>IEMs:</strong> Moondrop Aria</li>
+            <li><strong>Earpods:</strong> Airpods Gen 2</li>
+            <li><strong>Headphones:</strong> Audio Technica ATH-M50x</li>
+            <li><strong>Webcam:</strong> Logitech C922</li>
+          </ul>
+        </div>
+      </details>
+
+    </div>
+
+  </main>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <svg class="music-icon" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 10.5V3.5L11 2.5V9.5M5 10.5C5 11.3284 4.32843 12 3.5 12C2.67157 12 2 11.3284 2 10.5C2 9.67157 2.67157 9 3.5 9C4.32843 9 5 9.67157 5 10.5ZM11 9.5C11 10.3284 10.3284 11 9.5 11C8.67157 11 8 10.3284 8 9.5C8 8.67157 8.67157 8 9.5 8C10.3284 8 11 8.67157 11 9.5Z" stroke="#99bb42" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="now-playing" id="now-playing-text">—</span>
+    </div>
+    <div class="bottom-right">
+      <a href="https://github.com/koviyk/kov.fyi" class="version-label" target="_blank" rel="noopener noreferrer">v2.0.0</a>
+      <span class="date-label" id="current-date"></span>
+    </div>
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>
