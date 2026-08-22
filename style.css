@@ -178,8 +178,8 @@ a {
   width: 301px;
 }
 
-.gear-col.col-1 { left: 761px; }
-.gear-col.col-2 { left: 1139px; }
+.gear-col.col-1 { left: 781px; }
+.gear-col.col-2 { left: 1159px; }
 
 .gear-section summary {
   font-size: 13px;
@@ -245,8 +245,8 @@ a {
   width: 301px;
 }
 
-.projects-col.col-1 { left: 761px; }
-.projects-col.col-2 { left: 1139px; }
+.projects-col.col-1 { left: 781px; }
+.projects-col.col-2 { left: 1159px; }
 
 /* ============================================================
    CURRENT / BLOG PAGES — PLACEHOLDER
@@ -332,4 +332,547 @@ a {
   font-weight: 300;
   color: #83af11;
   line-height: 1.4;
+}
+
+/* ============================================================
+   SCROLL FADE INDICATOR
+   A "keep scrolling" hint for mobile pages whose content can
+   overflow past one screen. Hidden entirely on desktop (which
+   never scrolls at all — see `overflow: hidden` on `html, body`
+   above) via `display: none` here; the mobile media query below
+   turns it back on and gives it its real size/position.
+
+   Base rules (selector, gradient, z-index, pointer-events) live
+   here outside the media query since they never change between
+   portrait/landscape; only `display` toggles per breakpoint.
+   ============================================================ */
+.scroll-fade {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 75px;
+  /* Transparent at the top, solid page-background color at the
+     bottom — visually signals "there's more content under here"
+     without hard-clipping it, since the bottom of the fade lines
+     up with the same boundary `.stage`'s content is clipped at
+     (see `--mobile-bottom-clearance` below). */
+  background: linear-gradient(to bottom, rgba(245, 246, 244, 0), #f5f6f4);
+  z-index: 10; /* above .stage's content; .bottom-bar itself is a
+                  separate fixed element and unaffected by this,
+                  since this fade ends exactly where the bottom
+                  bar begins rather than overlapping it. */
+  pointer-events: none; /* purely visual — never blocks taps/scrolling */
+}
+
+/* ============================================================
+   MOBILE / RESPONSIVE LAYOUT
+   Applies at viewports <= 768px wide (portrait phones/tablets)
+   OR in landscape orientation with a short (<= 768px) height —
+   the second condition is what keeps the mobile layout (and its
+   fixed gaps) active when a phone is rotated to landscape,
+   instead of snapping back to the desktop fixed-1920 layout
+   the moment width crosses 768px. Matches the Figma
+   "Phone - ..." frames. Nothing above this block is touched or
+   overridden outside this media query — every desktop rule
+   stays byte-identical and pixel-identical above the
+   breakpoint. Below it, the layout switches from the fixed
+   1920x1080 absolute-position "stage" to a normal fluid,
+   vertically-flowing, single-column layout.
+
+   SCROLL MODEL: unlike an earlier draft, `html, body` are NOT
+   given `overflow-y: auto` here — they keep the same
+   `overflow: hidden` as desktop (inherited, untouched). Instead
+   `.stage` itself becomes the scrolling element, with its own
+   `height` capped to `calc(100vh - var(--mobile-bottom-clearance,
+   100px))`. That clearance is a hard, physical boundary:
+   `.stage`'s box literally ends at that height above the bottom
+   of the screen — so overflowed content is clipped there and
+   can only be reached by scrolling *within* `.stage`. It can
+   never visually appear behind/through the bottom bar (whose
+   background is transparent), because that strip is outside
+   `.stage`'s box entirely, not just visually covered. This is
+   the "invisible border" the bottom bar and nav sit behind, per
+   explicit user requirement.
+
+   PRECISE BOUNDARY (per later explicit user request): content
+   must stop exactly at the top pixel of the bottom bar's
+   "version" text, not at an arbitrary flat gap. That exact pixel
+   is font/line-height dependent and cannot be safely hardcoded
+   as a single px number across devices/browsers, so
+   `--mobile-bottom-clearance` is a CSS custom property SET BY
+   `script.js`'s `syncMobileBottomClearance()` — it measures
+   `.version-label`'s live `getBoundingClientRect().top` on load,
+   resize, and orientation change, and writes the resulting
+   `window.innerHeight - top` distance onto `<html>`. The literal
+   `100px` after the comma is only a fallback for the instant
+   before that script runs (or if JS is ever disabled) — once it
+   runs, the real measured value takes over immediately. */
+@media (max-width: 768px), (orientation: landscape) and (max-height: 768px) {
+  /* Stage becomes the scrolling element instead of a fixed,
+     centered, non-scrolling 1920x1080 box.
+
+     Side padding stays 24px (general breathing room for the
+     centered title/nav/illustration). Top/bottom padding are a
+     plain 25px each — the real clearance above the bottom bar
+     comes from the `height` calc below, not from padding. */
+  .stage {
+    position: static;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: calc(100vh - var(--mobile-bottom-clearance, 100px));
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 24px 25px 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* No blanket `gap` here — each pair of children needs its
+       own spacing value, applied as margin-bottom below instead
+       of a single uniform flex gap:
+       title -> nav: 10px, nav -> content: 50px. These are fixed
+       px values (not width-dependent), so they stay correct
+       through rotation as long as this media query still
+       matches — which the combined width/orientation condition
+       above guarantees. */
+  }
+
+  /* Title / home greeting — centered, static flow, 10px gap
+     down to the nav below it. */
+  .page-title-link,
+  .home-greeting-link {
+    position: static;
+    margin-bottom: 10px;
+  }
+
+  /* index.html's greeting uses an inline style="position:
+     absolute; left:...; top:..." attribute directly on the
+     element (unlike other pages' page-title, which is wrapped
+     in a link). Inline styles beat class-based rules regardless
+     of specificity, so this one case needs !important to be
+     overridden on mobile. Desktop is unaffected — this only
+     applies inside the mobile media query. */
+  .home-greeting {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    margin-bottom: 10px;
+  }
+
+  .page-title,
+  .home-greeting {
+    text-align: center;
+  }
+
+  /* Horizontal nav, centered, wraps on very narrow screens.
+     50px gap down to whatever content block follows it
+     (illustration on Home, text/columns on every other page). */
+  .stage nav {
+    width: 100%;
+    margin-bottom: 50px;
+  }
+
+  .side-nav {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .side-nav li {
+    position: static;
+  }
+
+  /* Home illustration — scales proportionally, keeps aspect
+     ratio, instead of a fixed 528x395px box. Stays centered
+     (it's not one of the "text element" content blocks below).
+     325px wide (per explicit user request, was 300px); height is
+     NOT hardcoded here — `.home-image img`'s `height: auto`
+     below lets the browser derive it from the image's own
+     intrinsic aspect ratio, so it automatically matches whatever
+     ratio the source file actually has rather than a value that
+     could drift out of sync if the image ever changes. Position
+     is unaffected by this width change: it still sits 50px below
+     the nav via `.stage nav`'s `margin-bottom: 50px` (further up
+     in this media query) — nothing about that spacing rule
+     references this element's width. */
+  .home-image {
+    position: static;
+    width: 100%;
+    max-width: 325px;
+  }
+
+  .home-image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Content blocks — about text, tba placeholder, and every
+     gear/projects accordion section. Left-aligned exactly 50px
+     from the screen's left edge (not centered like
+     title/nav/illustration above), and FLUID in width: the box
+     grows or shrinks with the viewport but never crosses either
+     the left or right 50px margin.
+
+     .stage already has 24px left padding, so the extra
+     margin-left needed to land exactly at 50px total is
+     50 - 24 = 26px. Width is `calc(100vw - 100px)` — the full
+     viewport minus 50px on each side — so it's genuinely
+     responsive (unlike a fixed px width with a max-width
+     safety cap): it fills exactly the space between the two
+     margins on every screen size and re-flows live on resize
+     or rotation. */
+  .about-text,
+  .tba-text,
+  .gear-section {
+    align-self: flex-start;
+    margin-left: 26px;
+    width: calc(100vw - 100px);
+  }
+
+  .about-text,
+  .tba-text {
+    position: static;
+  }
+
+  /* Gear / Projects — the two side-by-side desktop columns
+     (.gear-col.col-1/.col-2, .projects-col.col-1/.col-2) no
+     longer render as boxes on mobile: `display: contents` drops
+     the wrapper div itself while keeping its .gear-section
+     children in the DOM, so each accordion section becomes a
+     direct flex item of .stage and can be spaced/reordered
+     individually — which a plain "stack the two column boxes"
+     approach couldn't do (Peripherals lives in col-2 while Music
+     lives in col-1, so reordering across the two former columns
+     requires flattening them first). */
+  .gear-col.col-1,
+  .gear-col.col-2,
+  .projects-col.col-1,
+  .projects-col.col-2 {
+    display: contents;
+  }
+
+  /* 25px between every stacked accordion section (this is what
+     used to be "the gap between the two columns"; once
+     flattened, it's simplest and most consistent to apply it
+     uniformly between every section). */
+  .gear-section {
+    margin-bottom: 25px;
+  }
+
+  /* Gear page reorder: Peripherals (col-2's only section) must
+     render between PC Info and Music (col-1's two sections),
+     even though col-1's markup lists PC Info then Music with no
+     DOM node for Peripherals in between. Explicit flex `order`
+     values on the flattened sections achieve this without
+     touching gear.html's HTML. Only gear.html has 3 sections
+     matching these selectors; projects.html's two sections keep
+     their natural (unset) order, which already matches the
+     desired Youtube -> Animal Wifi sequence. */
+  .gear-col.col-1 .gear-section:nth-of-type(1) { order: 1; } /* PC Info */
+  .gear-col.col-2 .gear-section { order: 2; }                /* Peripherals */
+  .gear-col.col-1 .gear-section:nth-of-type(2) { order: 3; } /* Music */
+
+  /* GEAR / PROJECTS VERTICAL ALIGNMENT FIX (per explicit user
+     request: originally "up 5px", then an additional 5px on top
+     — now -10px total — on Gear/Projects only, both
+     orientations). This media query's own condition already
+     covers portrait AND rotated landscape, so one rule here
+     handles both — no separate copy needed in the landscape-only
+     block below.
+
+     Uses `position: relative; top: -10px` rather than a negative
+     margin. This is a deliberate choice: `position: relative`
+     offsets are purely visual/paint-time and do NOT change how
+     much space an element reserves in the layout — so every
+     `.gear-section` still occupies exactly the box height/gap it
+     was already calculated to have (the 25px margin-bottom
+     between sections, the 50px gap after nav, the flex sizing in
+     the landscape two-column layout are all untouched), it just
+     PAINTS 10px higher on screen. Applying it uniformly to every
+     `.gear-section` (not only the first one) means every section
+     shifts up by the same 10px, so the 25px gaps between
+     consecutive sections stay visually identical to each other —
+     only the distance from whatever sits above the first section
+     (the nav) changes, which is the actual symptom being fixed.
+     A negative `margin-top` was considered and rejected: it would
+     have actually shrunk the reserved layout box, which risked
+     subtly altering the flex sizing/wrapping math already tuned
+     for the landscape two-column layout — a real risk to avoid
+     given this cannot be visually re-verified in a browser per
+     explicit instruction. Desktop is unaffected (this rule lives
+     entirely inside the mobile media query). */
+  .gear-section {
+    position: relative;
+    top: -10px;
+  }
+
+  /* Scroll fade — visible only on mobile. Bottom edge pinned to
+     the exact same `--mobile-bottom-clearance` boundary that
+     `.stage`'s own height is capped at (see the PRECISE BOUNDARY
+     note earlier in this media query), so the fade's solid-color
+     bottom edge lines up perfectly with where `.stage`'s content
+     is clipped — it ends right where the bottom bar begins, with
+     no gap and no overlap. `bottom` (not `top`) is used to
+     position it so it stays anchored to that boundary regardless
+     of viewport height. `opacity` is intentionally NOT set here:
+     it starts at 1 (full gradient strength) by default and is
+     driven down toward 0 by `script.js`'s `syncScrollFade()` as
+     the user scrolls `.stage` toward its end — see that function
+     for the scroll-progress logic. */
+  .scroll-fade {
+    display: block;
+    bottom: var(--mobile-bottom-clearance, 100px);
+  }
+
+  /* Bottom bar — stays fixed/pinned to the viewport (not part of
+     the scrolling flow), 15px clear of the screen edge on every
+     side. `.stage`'s own dynamic `height` (set above, driven by
+     the live-measured `--mobile-bottom-clearance` custom
+     property) is what actually keeps scrolled content from ever
+     reaching this bar — see the SCROLL MODEL / PRECISE BOUNDARY
+     notes at the top of this media query. */
+  .bottom-bar {
+    padding: 0 15px 15px 15px;
+  }
+}
+
+/* ============================================================
+   MOBILE LANDSCAPE — GEAR / PROJECTS SIDE-BY-SIDE (experimental)
+   Only while rotated to landscape (and still within the mobile
+   breakpoint), restore Gear/Projects to a desktop-like two
+   -column layout instead of the portrait single stacked column
+   above. This block comes later in the file than the general
+   mobile rules, so on the specific properties it redeclares
+   (display, margin, width, order) it wins by source order at
+   equal specificity — everything else from the general mobile
+   block (colors, font sizes, the about/tba fluid-width rule,
+   etc.) is untouched and still applies.
+
+   Approach: UNDO the portrait `display: contents` flattening —
+   .gear-col / .projects-col go back to being real boxes (this
+   also makes the earlier portrait `order` overrides irrelevant:
+   order only affects direct flex children of a shared flex
+   container, and these two boxes are no longer that, so no
+   Peripherals-reorder happens here — landscape intentionally
+   uses the original desktop grouping: col-1 = PC Info + Music
+   stacked, col-2 = Peripherals alone / Youtube+Animal Wifi's own
+   column each, matching "similarly as they do on desktop").
+   `.stage` becomes a wrapping flex ROW so the two column boxes
+   can sit side by side; title/nav/home-image are forced to
+   flex-basis:100% so they still span a full row above the
+   columns instead of trying to sit beside them.
+
+   "Side by side, 50px apart" is wrap-based, not a fixed grid:
+   `.stage`'s `gap: 25px 50px` gives 50px between two columns
+   sharing a row and 25px between rows when a column doesn't fit
+   and wraps down — the browser's flex-wrap algorithm decides
+   per viewport width whether both columns fit, with no JS.
+
+   KNOWN TRADEOFF (flagged, not silently decided): only col-1
+   gets the margin-left that lines it up with the screen's left
+   edge margin (see the EDGE MARGIN OVERRIDE note below for the
+   current value); col-2 relies entirely on the 50px `gap` for
+   its position when side-by-side (adding a matching margin-left
+   to col-2 as well would double up with the gap, overshooting
+   the intended distance between columns). If col-2 ever wraps
+   alone onto its own row (very narrow landscape width), it will
+   sit flush at .stage's normal 24px edge padding instead of
+   col-1's larger edge margin — a minor, deliberately-accepted
+   asymmetry for this experimental first pass rather than a
+   silent bug.
+
+   EDGE MARGIN OVERRIDE (landscape only): the content-to-screen-
+   edge margin in this block is 100px, not the 50px used by the
+   general/portrait mobile block above (see the rule block
+   itself for the exact `margin-left`/`width` values on
+   `.about-text`/`.tba-text`/`.gear-col.col-1`/`.projects-col.col-1`).
+   This ONLY changes how far content sits from the left/right
+   screen edges while rotated — it does NOT change the 50px gap
+   between Gear/Projects' two columns, which stays a `column-gap`
+   on `.stage` untouched by this override. Portrait orientation
+   is unaffected; it keeps the general block's 50px margin.
+
+   TRIGGER CONDITION — this is NOT `(max-width: 768px) and
+   (orientation: landscape)`. A phone rotated to landscape is
+   routinely 800-930px wide (an actual test on an 844px-wide
+   landscape viewport confirmed the plain max-width condition
+   never fires on a real rotated device), so — exactly like the
+   general mobile media query above — this uses the viewport
+   HEIGHT, not width, to detect "still a phone, just sideways":
+   `(orientation: landscape) and (max-height: 768px)`. This is
+   the identical condition the general mobile block already uses
+   to stay active through rotation, so both blocks always agree
+   on when "mobile" applies; this one only adds on top of it
+   whenever landscape is also true.
+
+   GAP BUG FIX: an earlier draft of this block set a blanket
+   `gap: 25px 50px` on `.stage` once it became a wrapping flex
+   ROW. Flexbox `gap` and an item's own `margin` are ADDITIVE —
+   they do not replace each other — so that row-gap stacked on
+   top of the portrait block's `margin-bottom: 10px` (title->nav)
+   and `margin-bottom: 50px` (nav->content), silently inflating
+   them to 35px and 75px on every rotated page, not just
+   Gear/Projects. Fixed by using `column-gap` only (no row-gap)
+   on `.stage` — column-gap correctly spaces col-1/col-2 apart
+   horizontally when they share a row, while leaving the title
+   and nav's own margin-bottom values (10px / 50px, inherited
+   unchanged from the portrait block above) as the ONLY source of
+   vertical spacing, exactly as intended, on every page. The
+   25px "push down when a column wraps" spacing is applied
+   directly as `margin-bottom` on the columns themselves instead
+   (see below), so it only affects the Gear/Projects wrap case
+   and never leaks into the title/nav rhythm. */
+@media (orientation: landscape) and (max-height: 768px) {
+  /* REAL BUG FIX: `.stage` is a wrapping flex ROW with a fixed,
+     tall `height` (inherited from the general mobile block: a
+     dynamic `calc(100vh - var(--mobile-bottom-clearance))`, so
+     it can scroll). A multi-line flex
+     container's default `align-content` is `normal` (behaves as
+     `stretch`) — that stretches the GAPS BETWEEN WRAPPED LINES
+     (title's line, nav's line, content's line) to fill the
+     container's full height, on top of whatever margin-bottom
+     each item already has. That extra stretched space is what
+     produced the large, uneven gaps below the title and below
+     the nav in the rotated screenshots — the 10px/50px margins
+     were still applied underneath it, just swallowed by a much
+     bigger browser-inserted gap. `align-content: flex-start`
+     packs the wrapped lines tightly at the top instead, so the
+     ONLY vertical spacing between them is each item's own
+     margin-bottom (10px title->nav, 50px nav->content) — nothing
+     implicit added by the wrap algorithm. */
+  .stage {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    column-gap: 50px;
+  }
+
+  /* BUG FIX (home page, rotated only): `.stage` here is a flex
+     ROW with `justify-content: flex-start` (needed so
+     Gear/Projects' two columns anchor left instead of centering
+     as a pair) — a very different model from portrait's flex
+     COLUMN + `align-items: center`, where every child is
+     automatically centered regardless of its own width. Two
+     elements broke as a result:
+     1. `.home-greeting` (index.html's bare welcome text, NOT
+        wrapped in a link like every other page's title) was
+        missing from this "full width" list entirely, so it
+        stayed shrink-to-fit and sat flush left — its own
+        `text-align: center` (set in the general mobile block)
+        had no extra width to center text within. Added here.
+     2. `.home-image` WAS in this list already, but stretching
+        the outer wrapper to `width: 100%` does nothing for
+        centering once its `max-width: 325px` (see the Home
+        illustration rule above) clamps it back down — a
+        flex-row item with `justify-content: flex-start` still
+        anchors that smaller clamped box to the left edge. Fixed
+        below with `margin-left: auto; margin-right: auto` (see
+        that rule's own comment for why auto-margins, not
+        `justify-content`, are the correct tool here). */
+  .page-title-link,
+  .home-greeting-link,
+  .home-greeting,
+  .stage nav,
+  .home-image {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  /* `.home-image`'s own `max-width: 325px` (set in the general
+     mobile block above) shrinks its rendered box below the
+     100%-wide `flex-basis` it's just been given. That's fine on
+     its own, but `.stage`'s `justify-content: flex-start` (main
+     axis = horizontal here, since `.stage` is a flex ROW in
+     landscape) does NOT center an undersized item on its line —
+     it anchors it to the line's start and leaves the unused
+     space trailing after it, which is what was pushing the
+     illustration flush left instead of centered.
+     `margin-left: auto; margin-right: auto` is the standard
+     flexbox centering technique for exactly this situation: auto
+     margins on a flex item absorb the line's free space FIRST,
+     before `justify-content` gets a say, splitting it evenly on
+     both sides and centering the (still 325px-capped) box within
+     its full-width line — without changing its size or the
+     `max-width: 325px` behavior itself. */
+  .home-image {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* LANDSCAPE-ONLY EDGE MARGIN OVERRIDE: 100px from each screen
+     edge here (was 50px, inherited from the general/portrait
+     mobile block above). Scoped entirely to this media query, so
+     portrait keeps its 50px untouched — only rotated pages get
+     the wider 100px margin. Applies to the same elements that
+     had the 50px treatment: about-text / tba-text (fluid-width
+     text blocks) and gear-col.col-1 / projects-col.col-1 (the
+     left-most Gear/Projects column). The 50px column-gap between
+     col-1 and col-2 is untouched — this only changes the margin
+     between the CONTENT and the screen edges, not the gap between
+     the two columns themselves. */
+  .about-text,
+  .tba-text {
+    margin-left: 76px; /* 100px from the screen edge (24px stage padding + 76px) */
+    width: calc(100vw - 200px); /* 100px left + 100px right */
+  }
+
+  /* Undo the portrait flattening — real boxes again, matching
+     the desktop `.gear-col`/`.projects-col` base rules (which
+     already give `.gear-col` its `display:flex; flex-direction:
+     column; gap:40px` internal stacking — untouched, reused
+     as-is here, so PC Info/Music inside col-1 keep the exact
+     same 40px internal spacing desktop uses). */
+  .gear-col.col-1,
+  .gear-col.col-2,
+  .projects-col.col-1,
+  .projects-col.col-2 {
+    display: flex;
+    position: static;
+    left: auto;
+    top: auto;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    width: min(301px, calc(100vw - 200px)); /* 200px = 100px left + 100px right, matching the edge-margin override above */
+    /* 25px clearance if this column wraps down onto its own row
+       (see the GAP BUG FIX note above for why this lives here as
+       margin instead of a `.stage` row-gap). When both columns
+       fit on the same row this margin is invisible (nothing sits
+       below either column on that row), so it costs nothing in
+       the common case and only matters for the wrap case it's
+       meant for. */
+    margin-bottom: 25px;
+  }
+
+  .gear-col.col-1,
+  .projects-col.col-1 {
+    margin-left: 76px; /* 100px from the screen edge (24px stage padding + 76px) */
+  }
+
+  .gear-col.col-2,
+  .projects-col.col-2 {
+    margin-left: 0; /* positioned by .stage's 50px column-gap instead — see tradeoff note above */
+  }
+
+  /* Sections nested back inside a real column box no longer need
+     (and must not keep) the portrait flattened-section rules —
+     those would fight the column's own 40px gap and force each
+     section to the full viewport width, breaking the two-column
+     layout entirely. */
+  .gear-col .gear-section,
+  .projects-col .gear-section {
+    align-self: auto;
+    margin-left: 0;
+    margin-bottom: 0;
+    width: auto;
+    max-width: none;
+  }
 }
