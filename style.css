@@ -876,3 +876,95 @@ a {
     max-width: none;
   }
 }
+
+/* ============================================================
+   REF PAGE (ref.html) — standalone, unlinked utility page
+   Not part of the site's nav/pages system: no title, no nav, no
+   bottom bar. A single image, centered, on the shared page
+   background color. Uses its own `.ref-*` classes rather than
+   `.stage`/`.page-title`/etc. so this page's rules are fully
+   self-contained and cannot be affected by (or accidentally
+   affect) any rule elsewhere in this file — including the
+   `overflow: hidden`/`.stage` mobile media queries above, none
+   of which this page's markup even uses.
+
+   SIZING MODEL (FIXED — see bug note below): 900x973 is the
+   image's TARGET size on a large desktop screen, not a hard
+   fixed size. A wrapper `.ref-frame` is sized relative to the
+   viewport (`width`/`height` in vw/vh, each capped at 900px /
+   973px via `max-width`/`max-height`), and the `<img>` inside
+   it uses `width: 100%; height: 100%; object-fit: contain` to
+   scale itself to fill whatever size that frame actually ends
+   up being, while preserving its real aspect ratio (the source
+   file's actual proportions, 3207x3621, are not quite identical
+   to 900x973, hence `object-fit: contain` rather than a plain
+   width/height stretch). This is what makes the image genuinely
+   responsive: the FRAME shrinks with the viewport, and the image
+   just follows the frame.
+
+   BUG FIX: an earlier version of this rule put `max-width:
+   900px; max-height: 973px` directly on the `<img>` with no
+   `width`/`height` at all. Those `max-*` properties only cap an
+   element's size — they are NOT relative to the viewport or any
+   container, so with no `width`/`height` to constrain in the
+   first place, the browser rendered the image at its own
+   intrinsic 3207x3621 size (scaled down only by the `max-*`
+   ceiling itself), completely ignoring how much space the
+   actual browser window had. On any viewport smaller than
+   900x973, this meant the image stayed the same size and got
+   silently clipped instead of shrinking — exactly the bug
+   reported. Sizing the wrapper in `vw`/`vh` (viewport-relative
+   units) is what actually ties the image's size to the real
+   window/screen size; `max-width`/`max-height` alone never did.
+
+   `padding: 40px` on `.ref-stage` keeps the image off the very
+   edge of the viewport at small sizes instead of touching the
+   screen edges — this is what "resized to a good size... in a
+   similar aspect ratio... padding wise" means for mobile/iPad:
+   the frame's vw/vh sizing already accounts for that padding
+   (see `.ref-frame`'s calc() below), so the image shrinks
+   continuously with the available space on every screen size,
+   via one single rule set — no separate per-breakpoint
+   mobile/tablet overrides needed.
+   ============================================================ */
+.ref-body {
+  background-color: #f5f6f4;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* matches the rest of the site: this page never scrolls either */
+}
+
+.ref-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.ref-frame {
+  /* Sized relative to the actual viewport (vw/vh), not just
+     capped with max-width/max-height — this is the piece that
+     was missing before and is what makes the frame (and
+     therefore the image inside it) actually shrink on a smaller
+     browser window/screen instead of staying a fixed size. The
+     `calc()` subtracts .ref-stage's own 40px padding on each
+     side (80px total) so the frame plus that padding never
+     exceeds the viewport and never needs to scroll. Each
+     dimension is independently capped at the 900x973 desktop
+     target via `max-width`/`max-height`, so on any screen large
+     enough, the frame simply stops growing at that ceiling. */
+  width: calc(100vw - 80px);
+  height: calc(100vh - 80px);
+  max-width: 900px;
+  max-height: 973px;
+}
+
+.ref-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain; /* scales to fill .ref-frame while preserving the source file's real (slightly different) aspect ratio — never stretched */
+}
